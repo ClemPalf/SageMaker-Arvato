@@ -116,6 +116,9 @@ def dataset_treatment(azdias, customers, cust=True):
     
     imputer = SimpleImputer(strategy="most_frequent") # With this parameter, we will replace the NaN values by the most frequent value for this parameter.
     imputer.fit(azdias) # We will fit the imputer on the azidias esclusively, as it contains the most data. 
+    
+    response = customers["RESPONSE"]
+    del customers["RESPONSE"]
 
     azdias = pd.DataFrame(imputer.transform(azdias), columns = azdias.columns)
     customers = pd.DataFrame(imputer.transform(customers), columns = customers.columns)
@@ -124,6 +127,9 @@ def dataset_treatment(azdias, customers, cust=True):
     scaler.fit(azdias)
     azdias = pd.DataFrame(scaler.transform(azdias), columns = azdias.columns)
     customers = pd.DataFrame(scaler.transform(customers), columns = customers.columns)
+    
+    customers = pd.concat([response, customers], axis=1)
+    
     
     return azdias, customers
     
