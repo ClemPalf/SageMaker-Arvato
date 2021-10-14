@@ -37,15 +37,20 @@ def model_fn(model_dir):
     print("Done loading model.")
     return model
 
-# Gets training data in batches from the train.csv file
-def _get_train_data_loader(batch_size, training_dir):
-    print("Get train data loader.")
 
-    train_data = pd.read_csv(os.path.join(training_dir, "train.csv"), header=None, names=None)
+# Load the training data from a csv file
+def _get_train_data_loader(batch_size, data_dir):
+    print("Get data loader.")
 
+    # read in csv file
+    train_data = pd.read_csv(os.path.join(data_dir, "Pytorch_train.csv"), header=None, names=None)
+
+    # labels are first column
     train_y = torch.from_numpy(train_data[[0]].values).float().squeeze()
+    # features are the rest
     train_x = torch.from_numpy(train_data.drop([0], axis=1).values).float()
 
+    # create dataset
     train_ds = torch.utils.data.TensorDataset(train_x, train_y)
 
     return torch.utils.data.DataLoader(train_ds, batch_size=batch_size)
@@ -75,7 +80,7 @@ def train(model, train_loader, epochs, criterion, optimizer, device):
             batch_x, batch_y = batch
 
             batch_x = batch_x.to(device)
-            batch_y = batch_y.to(device)
+            batch_y = batch_y.unsquezze().to(device)
 
             optimizer.zero_grad()
 
@@ -108,8 +113,8 @@ if __name__ == '__main__':
     parser.add_argument('--data-dir', type=str, default=os.environ['SM_CHANNEL_TRAIN'])
     
     # Training Parameters, given
-    parser.add_argument('--batch-size', type=int, default=10, metavar='N',
-                        help='input batch size for training (default: 10)')
+    parser.add_argument('--batch-size', type=int, default=32, metavar='N',
+                        help='input batch size for training (default: 32)')
     parser.add_argument('--epochs', type=int, default=10, metavar='N',
                         help='number of epochs to train (default: 10)')
     parser.add_argument('--seed', type=int, default=1, metavar='S',
@@ -141,12 +146,12 @@ if __name__ == '__main__':
     # Load the training data.
     train_loader = _get_train_data_loader(args.batch_size, args.data_dir)
     
-    Build the model by passing in the input params
+    # Build the model by passing in the input params
     # To get params from the parser, call args.argument_name, ex. args.epochs or ards.hidden_dim
     # Don't forget to move your model .to(device) to move to GPU , if appropriate
     model = BinaryClassifier(args.input_dim, args.hidden_dim1, args.hidden_dim2, args.hidden_dim3, args.output_dim).to(device)
 
-    Define an optimizer and loss function for training
+    # Define an optimizer and loss function for training
     optimizer = optim.Adam(model.parameters())
     criterion = nn.BCELoss()
 

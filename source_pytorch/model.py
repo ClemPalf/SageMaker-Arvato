@@ -27,7 +27,7 @@ class BinaryClassifier(nn.Module):
         super(BinaryClassifier, self).__init__()
 
         # define any initial layers, here
-        self.fc1 = nn.Linear(input_dim, hidden_dim1)
+        self.fcfucking1 = nn.Linear(input_dim, hidden_dim1)
         self.fc2 = nn.Linear(hidden_dim1, hidden_dim2)
         self.fc3 = nn.Linear(hidden_dim2, hidden_dim3)
         self.fc4 = nn.Linear(hidden_dim3, output_dim)
@@ -45,12 +45,12 @@ class BinaryClassifier(nn.Module):
         """
         
         # define the feedforward behavior
-        out = F.relu(self.fc1(x)) # activation on hidden layer
+        out = F.relu(self.fcfucking1(x)) 
         out = self.drop(out)
-        out = F.relu(self.fc2(x))
+        out = F.relu(self.fc2(out))
         out = self.drop(out)
-        out = F.relu(self.fc3(x))
-        out = self.fc4(x)
+        out = F.relu(self.fc3(out))
+        out = self.fc4(out)
         
         return self.sig(out) # returning class score
         
