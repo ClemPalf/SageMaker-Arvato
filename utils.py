@@ -144,7 +144,6 @@ def dataset_treatment_test(azdias, customers):
     # Just the person ID
     del azdias["LNR"]
     del customers["LNR"]
-    del customers["RESPONSE"]
     
     # Replace 'X', 'XX' and 'nan' values with np.nan for 'CAMEO_DEUG_2015' and 'CAMEO_INTL_2015' columns
     cols = ["CAMEO_DEUG_2015", "CAMEO_INTL_2015"]
@@ -209,7 +208,7 @@ def dataset_treatment_test(azdias, customers):
     azdias = pd.DataFrame(scaler.transform(azdias), columns = azdias.columns)
     customers = pd.DataFrame(scaler.transform(customers), columns = customers.columns)
     
-    customers = pd.concat([LNR, customers], axis=1)
+    
     
     
     return azdias, customers
