@@ -9,7 +9,7 @@ This project is to help a Mail-Order company to acquire new customers to sell it
 ## Files 
 - **proposal.pdf** My project proposal. Introducing the problem and my proposed solutions at the time. Some aspects changed as I was progressing throughout the project.
 - **report.pdf** My project report. Splited into 5 major parts: Definition, Analysis, Methodology and Results.
-- **Notebooks 1,2 and 3** Containing respectively the code for Data preprocessing, Dimanesionality reduction / clustering and Model creation.
+- **Notebooks 1,2 and 3** Containing respectively the code for Data preprocessing, Dimensionality reduction / clustering and Model creation.
 - **source_pytorch** Contain the model/train/predict.py files required for the creation and deployment of a pytorch model with SageMaker.
 
 ## Instructions
