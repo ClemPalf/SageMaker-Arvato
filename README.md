@@ -1,4 +1,4 @@
-# AWS-segmentation-report
+# SageMaker-Arvato
 
 This repository contains code and report for "Capstone Project - Arvato Customer Segmentation" done as part of Udacity Machine Learning Engineer Nanodegree program.
 
