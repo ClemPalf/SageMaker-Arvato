@@ -5,53 +5,6 @@ import time
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
 
-def get_unkown_repr(attrib, unkown_attributes_values):
-    """
-    Returns the representation of unkown values
-    """
-    
-    unkown = unkown_attributes_values[unkown_attributes_values["Attribute"] == attrib]["Value"]
-    unkown = unkown.astype(str).str.cat(sep=",")
-    unkown = [int(x) for x in unkown.split(",")]
-      
-    return [unkown]
-
-
-def replace_unkown_with_nan(val, unkown):
-    """
-    Replaces unkown values with np.nan values if the value mathes with the unkown rep
-    """
-    if val in unkown:
-        return np.nan
-    else:
-        return val
-
-def unknown_to_NaN(df, unkown_attributes_values):
-    """
-    Replaces unkown values to 'np.nan' in all the columns provided in unkown_attributes_values list.
-    """
-    for attrib in unkown_attributes_values.Attribute:
-        unkown = get_unkown_repr(attrib, unkown_attributes_values)
-        if attrib in df.columns:   # For some reasons, some attributes are not present in the datasets
-            df[attrib] = df[attrib].apply(replace_unkown_with_nan, args=(unkown))
-    return df
-
-def remove_rows(df, threshold):
-    """
-    Drops rows with number of missing features as per given threshold.
-    """
-    
-    df = df.dropna(thresh=df.shape[1]-threshold).reset_index(drop=True) # thresh (int, optional): Require that many non-NA values.
-    
-    return df
-
-def date_to_year(df):
-    
-    df["EINGEFUEGT_AM"] = pd.to_datetime(df["EINGEFUEGT_AM"])
-    df["EINGEFUEGT_AM"] = df['EINGEFUEGT_AM'].map(lambda x: x.year)
-    
-    return df
-
 def dataset_treatment(azdias, customers, cust=True):
     
     print("Deleting columns...")
@@ -119,8 +72,7 @@ def dataset_treatment(azdias, customers, cust=True):
     imputer.fit(azdias) # We will fit the imputer on the azidias esclusively, as it contains the most data. 
     
     
-    response = customers["RESPONSE"]
-    del customers["RESPONSE"]
+    
 
     azdias = pd.DataFrame(imputer.transform(azdias), columns = azdias.columns)
     customers = pd.DataFrame(imputer.transform(customers), columns = customers.columns)
@@ -129,8 +81,6 @@ def dataset_treatment(azdias, customers, cust=True):
     scaler.fit(azdias)
     azdias = pd.DataFrame(scaler.transform(azdias), columns = azdias.columns)
     customers = pd.DataFrame(scaler.transform(customers), columns = customers.columns)
-    
-    customers = pd.concat([response, customers], axis=1)
     
     
     return azdias, customers
@@ -196,9 +146,6 @@ def dataset_treatment_test(azdias, customers):
     imputer = SimpleImputer(strategy="most_frequent") # With this parameter, we will replace the NaN values by the most frequent value for this parameter.
     imputer.fit(azdias) # We will fit the imputer on the azidias esclusively, as it contains the most data. 
     
-    
-    
-    
 
     azdias = pd.DataFrame(imputer.transform(azdias), columns = azdias.columns)
     customers = pd.DataFrame(imputer.transform(customers), columns = customers.columns)
@@ -212,3 +159,35 @@ def dataset_treatment_test(azdias, customers):
     
     
     return azdias, customers
+
+def get_unkown_repr(attrib, unkown_attributes_values):
+    unkown = unkown_attributes_values[unkown_attributes_values["Attribute"] == attrib]["Value"]
+    unkown = unkown.astype(str).str.cat(sep=",")
+    unkown = [int(x) for x in unkown.split(",")]
+      
+    return [unkown]
+
+
+def replace_unkown_with_nan(val, unkown):
+    if val in unkown:
+        return np.nan
+    else:
+        return val
+
+def unknown_to_NaN(df, unkown_attributes_values):
+    for attrib in unkown_attributes_values.Attribute:
+        unkown = get_unkown_repr(attrib, unkown_attributes_values)
+        if attrib in df.columns:   # For some reasons, some attributes are not present in the datasets
+            df[attrib] = df[attrib].apply(replace_unkown_with_nan, args=(unkown))
+    return df
+
+def remove_rows(df, threshold):
+    df = df.dropna(thresh=df.shape[1]-threshold).reset_index(drop=True) # thresh (int, optional): Require that many non-NA values.
+    
+    return df
+
+def date_to_year(df):
+    df["EINGEFUEGT_AM"] = pd.to_datetime(df["EINGEFUEGT_AM"])
+    df["EINGEFUEGT_AM"] = df['EINGEFUEGT_AM'].map(lambda x: x.year)
+    
+    return df
